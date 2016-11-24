@@ -1,0 +1,22 @@
+{
+  "name": "keboola/processor-transpose",
+  "license": "MIT",
+  "type": "project",
+  "require": {
+    "php": "~5.6 || ~7.0",
+    "symfony/filesystem": "~3.1",
+    "symfony/finder": "~3.1",
+    "keboola/csv": "^1.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~5.4",
+    "codeclimate/php-test-reporter": "dev-master",
+    "squizlabs/php_codesniffer": "^2.6",
+    "keboola/php-temp": "~0.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "Keboola\\": "src/Keboola/"
+    }
+  }
+}
