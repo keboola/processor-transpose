@@ -8,7 +8,7 @@ Transforms table data from input CSV file into key-value pairs.
 Example input:
 
    |01/2016|01/2016|02/2016|02/2016|03/2016|03/2016
----|---|---
+---|---|---|---|---|---|---
 Manager|Margin|Bonus|Margin|Bonus|Margin|Bonus
 Alice|855000|9000|855000|9500|877500|9500
 Bob|475000|7000|570000|7500|585000|7500
