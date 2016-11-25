@@ -11,9 +11,8 @@ use Symfony\Component\Finder\Finder;
 
 class TransposeTest extends TestCase
 {
-    private function prepareTmpDir()
+    private function prepareTmpDir(Temp $tmp)
     {
-        $tmp = new Temp();
         $fs = new Filesystem();
         $fs->mkdir($tmp->getTmpFolder() . "/data/in/files");
         $fs->mkdir($tmp->getTmpFolder() . "/data/out/files");
@@ -24,6 +23,9 @@ class TransposeTest extends TestCase
 
     public function testTranspose()
     {
+        $tmp = new Temp();
+        $tmpDir = $this->prepareTmpDir($tmp);
+
         $config = [
             "filename" => "input.csv",
             "header_rows_count" => 2,
@@ -33,7 +35,7 @@ class TransposeTest extends TestCase
             "header_sanitize" => true,
             "transpose_from_column" => 6
         ];
-        $tmpDir = $this->prepareTmpDir();
+
         $processor = new Transpose($tmpDir . '/data');
         $processor->process($config);
 
@@ -43,17 +45,4 @@ class TransposeTest extends TestCase
         $this->assertEquals(1, count($files));
         $this->assertFileEquals(__DIR__ . "/data/out/files/expected.csv", $tmpDir . "/data/out/files/input.csv");
     }
-
-//    /**
-//     * @expectedException \Keboola\Processor\Exception
-//     * @expectedExceptionMessage No files found with tag 'tag5'.
-//     */
-//    public function testLastFileTag5()
-//    {
-//        $tmp = new Temp();
-//        $this->prepareTmpDir($tmp);
-//        $tmpDir = $tmp->getTmpFolder();
-//        $lastFile = new LastFile($tmpDir . "/data/in/files/");
-//        $lastFile->filterTag("tag5", $tmpDir . "/data/out/files/");
-//    }
 }
