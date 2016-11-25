@@ -7,14 +7,11 @@ Transforms table data from input CSV file into key-value pairs.
 
 Example input:
 
-|01/2016|01/2016|02/2016|02/2016|03/2016|03/2016
+   |01/2016|01/2016|02/2016|02/2016|03/2016|03/2016
 ---|---|---
 Manager|Margin|Bonus|Margin|Bonus|Margin|Bonus
----|---|---
 Alice|855000|9000|855000|9500|877500|9500
----|---|---
 Bob|475000|7000|570000|7500|585000|7500
----|---|---
 Eve|142500|3500|475000|6500|585000|7500
 
 Example output (using sample configuration below):
@@ -22,39 +19,22 @@ Example output (using sample configuration below):
 manager|month|key|value
 ---|---|---|---
 Alice|01/2016|Margin|855000
----|---|---|---
 Alice|01/2016|Bonus|9000
----|---|---|---
 Alice|02/2016|Margin|855000
----|---|---|---
 Alice|02/2016|Bonus|9500
----|---|---|---
 Alice|03/2016|Margin|877500
----|---|---|---
 Alice|03/2016|Bonus|9500
----|---|---|---
 Bop|01/2016|Margin|475000
----|---|---|---
 Bop|01/2016|Bonus|7000
----|---|---|---
 Bop|02/2016|Margin|570000
----|---|---|---
 Bop|02/2016|Bonus|7500
----|---|---|---
 Bop|03/2016|Margin|585000
----|---|---|---
 Bop|03/2016|Bonus|7500
----|---|---|---
 Eve|01/2016|Margin|142500
----|---|---|---
 Eve|01/2016|Bonus|3500
----|---|---|---
 Eve|02/2016|Margin|475000
----|---|---|---
 Eve|02/2016|Bonus|6500
----|---|---|---
 Eve|03/2016|Margin|585000
----|---|---|---
 Eve|03/2016|Bonus|7500
 
 
