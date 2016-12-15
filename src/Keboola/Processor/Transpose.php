@@ -36,6 +36,13 @@ class Transpose
         return new CsvFile($outputFilePath);
     }
 
+    protected function copyManifest($inputFilePath)
+    {
+        $manifestInputPath = $inputFilePath . '.manifest';
+        $fs = new Filesystem();
+        $fs->copy($manifestInputPath, str_replace('/in/', '/out/', $manifestInputPath));
+    }
+
     /**
      * Process file using config settings
      * @param $config
@@ -88,6 +95,8 @@ class Transpose
 
             $i++;
         }
+
+        $this->copyManifest($inputCsv->getPathname());
 
         return $i;
     }

@@ -44,5 +44,6 @@ class TransposeTest extends TestCase
 
         $this->assertEquals(1, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
     }
 }
