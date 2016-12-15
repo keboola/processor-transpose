@@ -1,5 +1,7 @@
 <?php
 
+use Symfony\Component\Yaml\Yaml;
+
 require_once(dirname(__FILE__) . "/../vendor/autoload.php");
 
 $arguments = getopt("d::", array("data::"));
@@ -8,12 +10,15 @@ if (!isset($arguments["data"])) {
     exit(1);
 }
 
-if (!file_exists($arguments["data"] . "/config.json")) {
-    print "config.json file not found";
+$config = null;
+if (file_exists($arguments['data'] . '/config.json')) {
+    $config = json_decode(file_get_contents($arguments['data'] . '/config.json'), true);
+} else if (file_exists($arguments['data'] . '/config.yml')) {
+    $config = Yaml::parse(file_get_contents($arguments['data'] . '/config.yml'));
+} else {
+    print "Neither config.json or config.yml found";
     exit(1);
 }
-
-$config = json_decode(file_get_contents($arguments["data"] . "/config.json"), true);
 
 //@todo check config parameters
 
