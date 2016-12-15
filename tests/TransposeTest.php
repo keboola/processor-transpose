@@ -14,9 +14,9 @@ class TransposeTest extends TestCase
     private function prepareTmpDir(Temp $tmp)
     {
         $fs = new Filesystem();
-        $fs->mkdir($tmp->getTmpFolder() . "/data/in/files");
-        $fs->mkdir($tmp->getTmpFolder() . "/data/out/files");
-        $fs->copy(__DIR__ . "/data/in/files/input.csv", $tmp->getTmpFolder() . "/data/in/files/input.csv");
+        $fs->mkdir($tmp->getTmpFolder() . "/data/in/tables");
+        $fs->mkdir($tmp->getTmpFolder() . "/data/out/tables");
+        $fs->copy(__DIR__ . "/data/in/tables/input.csv", $tmp->getTmpFolder() . "/data/in/tables/input.csv");
 
         return $tmp->getTmpFolder();
     }
@@ -40,9 +40,9 @@ class TransposeTest extends TestCase
         $processor->process($config);
 
         $finder = new Finder();
-        $files = (array) $finder->files()->in($tmpDir . "/data/out/files/")->sortByName()->getIterator();
+        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->sortByName()->getIterator();
 
-        $this->assertEquals(1, count($files));
-        $this->assertFileEquals(__DIR__ . "/data/out/files/expected.csv", $tmpDir . "/data/out/files/input.csv");
+        $this->assertEquals(1, count($tables));
+        $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
     }
 }

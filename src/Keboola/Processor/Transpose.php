@@ -16,7 +16,7 @@ class Transpose
 
     protected function getInputFile($filename)
     {
-        $inputFilePath = $this->path . '/in/files/' . $filename;
+        $inputFilePath = $this->path . '/in/tables/' . $filename;
 
         if (!file_exists($inputFilePath)) {
             throw new Exception(sprintf("Input file '%s' not found.", $inputFilePath));
@@ -27,7 +27,7 @@ class Transpose
 
     protected function createOutputFile(CsvFile $inputCsv)
     {
-        $outputFilePath = $this->path . '/out/files/' . $inputCsv->getFilename();
+        $outputFilePath = $this->path . '/out/tables/' . $inputCsv->getFilename();
         touch($outputFilePath);
 
         return new CsvFile($outputFilePath);
