@@ -47,7 +47,7 @@ class TransposeTest extends TestCase
         $processor->process($config);
 
         $finder = new Finder();
-        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->sortByName()->getIterator();
+        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
 
         $this->assertEquals(1, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
