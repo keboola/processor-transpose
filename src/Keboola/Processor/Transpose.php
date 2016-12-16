@@ -55,24 +55,28 @@ class Transpose
         $inputCsv = $this->getInputFile($config['filename']);
         $outputCsv = $this->createOutputFile($inputCsv);
 
-        $i = 0;
+        $i = 1;
+        $performTranspose = isset($config['transpose']) && $config['transpose'];
         $csvTransposeHeader = null;
         $csvHeaderRaw = array();
         $transpose = null;
 
         foreach ($inputCsv as $csvRow) {
-            if ($i < $config['header_rows_count']) {
-                if ($i == $config['header_rows_count'] - 1) {
+            if ($i <= $config['header_rows_count']) {
+                if ($i == $config['header_rows_count']) {
                     $csvHeaderRaw = $csvRow;
                     $csvOutHeaderArr = $csvHeaderRaw;
 
-                    if (!empty($config['header_column_names'])) {
-                        $csvOutHeaderArr = $config['header_column_names'];
+                    if ($performTranspose) {
+                        if (!empty($config['header_column_names'])) {
+                            $csvOutHeaderArr = $config['header_column_names'];
+                        }
+                        if (!empty($config['transpose_from_column'])) {
+                            $csvOutHeaderArr = $this->transposeHeader($csvOutHeaderArr, $config);
+                        }
                     }
-                    if (!empty($config['transpose_from_column'])) {
-                        $csvOutHeaderArr = $this->transposeHeader($csvOutHeaderArr, $config);
-                    }
-                    if (!isset($config['header']['sanitize']) || $config['header']['sanitize'] !== false) {
+
+                    if (!isset($config['header_sanitize']) || $config['header_sanitize'] !== false) {
                         $csvOutHeaderArr = $this->normalizeCsvHeader($csvOutHeaderArr);
                     }
 
@@ -81,13 +85,12 @@ class Transpose
                     $csvTransposeHeader = $csvRow;
                 }
 
-                $transpose = $this->getTransposeFn($config, $outputCsv, $csvHeaderRaw, $csvTransposeHeader);
-
                 $i++;
                 continue;
             }
 
-            if (isset($config['transpose_from_column'])) {
+            if (isset($config['transpose_from_column']) && $performTranspose) {
+                $transpose = $this->getTransposeFn($config, $outputCsv, $csvHeaderRaw, $csvTransposeHeader);
                 $transpose($csvRow);
             } else {
                 $outputCsv->writeRow($csvRow);

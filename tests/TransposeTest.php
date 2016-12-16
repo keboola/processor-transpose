@@ -34,6 +34,7 @@ class TransposeTest extends TestCase
         $tmpDir = $this->prepareTmpDir($tmp);
 
         $config = [
+            "transpose" => true,
             "filename" => "input.csv",
             "header_rows_count" => 2,
             "header_column_names" => ["Obchodnik","Team","Manager","Mesto","Region"],
@@ -51,6 +52,29 @@ class TransposeTest extends TestCase
 
         $this->assertEquals(1, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
+    }
+
+    public function testTransposeDisabled()
+    {
+        $tmp = new Temp();
+        $tmpDir = $this->prepareTmpDir($tmp);
+
+        $config = [
+            "transpose" => false,
+            "filename" => "input.csv",
+            "header_rows_count" => 1,
+            "header_sanitize" => false
+        ];
+
+        $processor = new Transpose($tmpDir . '/data');
+        $processor->process($config);
+
+        $finder = new Finder();
+        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
+
+        $this->assertEquals(1, count($tables));
+        $this->assertFileEquals(__DIR__ . "/data/in/tables/input.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
     }
 }
