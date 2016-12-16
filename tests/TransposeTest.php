@@ -16,7 +16,14 @@ class TransposeTest extends TestCase
         $fs = new Filesystem();
         $fs->mkdir($tmp->getTmpFolder() . "/data/in/tables");
         $fs->mkdir($tmp->getTmpFolder() . "/data/out/tables");
-        $fs->copy(__DIR__ . "/data/in/tables/input.csv", $tmp->getTmpFolder() . "/data/in/tables/input.csv");
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input.csv",
+            $tmp->getTmpFolder() . "/data/in/tables/input.csv"
+        );
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input.csv.manifest",
+            $tmp->getTmpFolder() . "/data/in/tables/input.csv.manifest"
+        );
 
         return $tmp->getTmpFolder();
     }
