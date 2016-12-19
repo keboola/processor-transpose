@@ -43,8 +43,9 @@ class Transpose
         $fs->copy($manifestInputPath, str_replace('/in/', '/out/', $manifestInputPath));
     }
 
-    protected function copyUnprocessed($inputFilePath)
+    protected function copyUnprocessed($inputCsv)
     {
+        $inputFilePath = $inputCsv ? $inputCsv->getPathname() : null;
         $finder = new Finder();
         $fs = new Filesystem();
 
@@ -72,56 +73,58 @@ class Transpose
      */
     public function process($config)
     {
-        $inputCsv = $this->getInputFile($config['filename']);
-        $outputCsv = $this->createOutputFile($inputCsv);
-
         $i = 1;
-        $performTranspose = isset($config['transpose']) && $config['transpose'];
-        $csvTransposeHeader = null;
-        $csvHeaderRaw = array();
-        $transpose = null;
+        $inputCsv = $this->getInputFile($config['filename']);
 
-        foreach ($inputCsv as $csvRow) {
-            if ($i <= $config['header_rows_count']) {
-                if ($i == $config['header_rows_count']) {
-                    $csvHeaderRaw = $csvRow;
-                    $csvOutHeaderArr = $csvHeaderRaw;
+        if ($inputCsv) {
+            $outputCsv = $this->createOutputFile($inputCsv);
+            $performTranspose = isset($config['transpose']) && $config['transpose'];
+            $csvTransposeHeader = null;
+            $csvHeaderRaw = array();
+            $transpose = null;
 
-                    if ($performTranspose) {
-                        if (!empty($config['header_column_names'])) {
-                            $csvOutHeaderArr = $config['header_column_names'];
+            foreach ($inputCsv as $csvRow) {
+                if ($i <= $config['header_rows_count']) {
+                    if ($i == $config['header_rows_count']) {
+                        $csvHeaderRaw = $csvRow;
+                        $csvOutHeaderArr = $csvHeaderRaw;
+
+                        if ($performTranspose) {
+                            if (!empty($config['header_column_names'])) {
+                                $csvOutHeaderArr = $config['header_column_names'];
+                            }
+                            if (!empty($config['transpose_from_column'])) {
+                                $csvOutHeaderArr = $this->transposeHeader($csvOutHeaderArr, $config);
+                            }
                         }
-                        if (!empty($config['transpose_from_column'])) {
-                            $csvOutHeaderArr = $this->transposeHeader($csvOutHeaderArr, $config);
+
+                        if (!isset($config['header_sanitize']) || $config['header_sanitize'] !== false) {
+                            $csvOutHeaderArr = $this->normalizeCsvHeader($csvOutHeaderArr);
                         }
+
+                        $outputCsv->writeRow($csvOutHeaderArr);
+                    } else {
+                        $csvTransposeHeader = $csvRow;
                     }
 
-                    if (!isset($config['header_sanitize']) || $config['header_sanitize'] !== false) {
-                        $csvOutHeaderArr = $this->normalizeCsvHeader($csvOutHeaderArr);
-                    }
+                    $i++;
+                    continue;
+                }
 
-                    $outputCsv->writeRow($csvOutHeaderArr);
+                if (isset($config['transpose_from_column']) && $performTranspose) {
+                    $transpose = $this->getTransposeFn($config, $outputCsv, $csvHeaderRaw, $csvTransposeHeader);
+                    $transpose($csvRow);
                 } else {
-                    $csvTransposeHeader = $csvRow;
+                    $outputCsv->writeRow($csvRow);
                 }
 
                 $i++;
-                continue;
             }
-
-            if (isset($config['transpose_from_column']) && $performTranspose) {
-                $transpose = $this->getTransposeFn($config, $outputCsv, $csvHeaderRaw, $csvTransposeHeader);
-                $transpose($csvRow);
-            } else {
-                $outputCsv->writeRow($csvRow);
-            }
-
-            $i++;
         }
 
-        $this->copyUnprocessed($inputCsv->getPathname());
+        $this->copyUnprocessed($inputCsv);
 
-        return $i;
+        return $i-1;
     }
 
     protected function getTransposeFn($config, CsvFile $output, $csvHeaderRaw, $csvTransposeHeader) {
