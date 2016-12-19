@@ -21,7 +21,7 @@ class Transpose
         if (!file_exists($inputFilePath)) {
             $inputFilePath = $this->path . '/in/tables/' . str_replace('.csv', '', $filename) . '_out.csv';
             if (!file_exists($inputFilePath)) {
-                throw new Exception(sprintf("Input file '%s' not found.", $inputFilePath));
+                return null;
             }
         }
 
