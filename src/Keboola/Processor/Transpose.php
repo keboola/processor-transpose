@@ -43,6 +43,26 @@ class Transpose
         $fs->copy($manifestInputPath, str_replace('/in/', '/out/', $manifestInputPath));
     }
 
+    protected function copyUnprocessed($inputFilePath)
+    {
+        $finder = new Finder();
+        $fs = new Filesystem();
+
+        $inputFiles = $finder->files()
+            ->in($this->path . "/in/tables")
+            ->name('*.csv')
+            ->sortByName()
+            ->getIterator()
+        ;
+
+        foreach ($inputFiles as $file) {
+            if ($inputFilePath !== $file->getPathname()) {
+                $fs->copy($file->getPathname(), str_replace('/in/', '/out/', $file->getPathname()));
+            }
+            $this->copyManifest($file->getPathname());
+        }
+    }
+
     /**
      * Process file using config settings
      * @param $config
@@ -99,7 +119,7 @@ class Transpose
             $i++;
         }
 
-        $this->copyManifest($inputCsv->getPathname());
+        $this->copyUnprocessed($inputCsv->getPathname());
 
         return $i;
     }

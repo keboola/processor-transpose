@@ -24,6 +24,14 @@ class TransposeTest extends TestCase
             __DIR__ . "/data/in/tables/input.csv.manifest",
             $tmp->getTmpFolder() . "/data/in/tables/input.csv.manifest"
         );
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input_2.csv",
+            $tmp->getTmpFolder() . "/data/in/tables/input_2.csv"
+        );
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input_2.csv.manifest",
+            $tmp->getTmpFolder() . "/data/in/tables/input_2.csv.manifest"
+        );
 
         return $tmp->getTmpFolder();
     }
@@ -50,9 +58,11 @@ class TransposeTest extends TestCase
         $finder = new Finder();
         $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
 
-        $this->assertEquals(1, count($tables));
+        $this->assertEquals(2, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
     }
 
     public function testTransposeDisabled()
@@ -73,8 +83,10 @@ class TransposeTest extends TestCase
         $finder = new Finder();
         $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
 
-        $this->assertEquals(1, count($tables));
+        $this->assertEquals(2, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/in/tables/input.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
     }
 }
