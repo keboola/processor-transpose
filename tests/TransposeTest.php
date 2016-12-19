@@ -2,6 +2,7 @@
 
 namespace Keboola\Processor\LastFile\Tests;
 
+use Keboola\Csv\CsvFile;
 use Keboola\Processor\LastFile;
 use Keboola\Processor\Transpose;
 use Keboola\Temp\Temp;
@@ -88,5 +89,34 @@ class TransposeTest extends TestCase
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
+    }
+
+    public function testJustReplaceHeader()
+    {
+        $tmp = new Temp();
+        $tmp->setPreserveRunFolder(true);
+        $tmpDir = $this->prepareTmpDir($tmp);
+
+        $header = ["Obchodnik","Team","Manager","Mesto","Region","Marze","Bonus","Marze","Bonus","Marze","Bonus","Marze","Bonus"];
+        $config = [
+            "transpose" => true,
+            "filename" => "input.csv",
+            "header_rows_count" => 2,
+            "header_column_names" => $header
+        ];
+
+        $processor = new Transpose($tmpDir . '/data');
+        $processor->process($config);
+
+        $finder = new Finder();
+        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
+
+        $this->assertEquals(2, count($tables));
+        $this->assertFileExists($tmpDir . "/data/out/tables/input.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
+        $resultCsv = new CsvFile($tmpDir . "/data/out/tables/input.csv");
+        $this->assertEquals($header, $resultCsv->getHeader());
     }
 }
