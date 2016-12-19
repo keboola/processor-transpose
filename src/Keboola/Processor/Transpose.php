@@ -93,7 +93,7 @@ class Transpose
                             if (!empty($config['header_column_names'])) {
                                 $csvOutHeaderArr = $config['header_column_names'];
                             }
-                            if (!empty($config['transpose_from_column'])) {
+                            if (isset($config['transpose_from_column']) && $config['transpose_from_column'] > 0) {
                                 $csvOutHeaderArr = $this->transposeHeader($csvOutHeaderArr, $config);
                             }
                         }
@@ -111,7 +111,7 @@ class Transpose
                     continue;
                 }
 
-                if (isset($config['transpose_from_column']) && $performTranspose) {
+                if (isset($config['transpose_from_column']) && $performTranspose && $config['transpose_from_column'] > 0) {
                     $transpose = $this->getTransposeFn($config, $outputCsv, $csvHeaderRaw, $csvTransposeHeader);
                     $transpose($csvRow);
                 } else {
