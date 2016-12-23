@@ -40,6 +40,7 @@ class TransposeTest extends TestCase
     public function testTranspose()
     {
         $tmp = new Temp();
+        $tmp->setPreserveRunFolder(true);
         $tmpDir = $this->prepareTmpDir($tmp);
 
         $config = [
@@ -74,7 +75,7 @@ class TransposeTest extends TestCase
         $config = [
             "transpose" => false,
             "filename" => "input.csv",
-            "header_rows_count" => 1,
+            "header_rows_count" => 2,
             "header_sanitize" => false
         ];
 
@@ -85,10 +86,16 @@ class TransposeTest extends TestCase
         $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
 
         $this->assertEquals(2, count($tables));
-        $this->assertFileEquals(__DIR__ . "/data/in/tables/input.csv", $tmpDir . "/data/out/tables/input.csv");
+        $this->assertFileNotEquals(__DIR__ . "/data/in/tables/input.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
+
+        $csv = new CsvFile($tmpDir . "/data/out/tables/input.csv");
+        $this->assertEquals(
+            ["Obchodnik","Team","Manager","Mesto","Region","Marze","Bonus","Marze","Bonus","Marze","Bonus","Marze","Bonus"],
+            $csv->getHeader()
+        );
     }
 
     public function testJustReplaceHeader()
