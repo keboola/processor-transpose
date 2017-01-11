@@ -98,7 +98,7 @@ class Transpose
                             }
                         }
 
-                        if (!isset($config['header_sanitize']) || $config['header_sanitize'] !== false) {
+                        if (!isset($config['header_sanitize']) || boolval($config['header_sanitize']) !== false) {
                             $csvOutHeaderArr = $this->normalizeCsvHeader($csvOutHeaderArr);
                         }
 
