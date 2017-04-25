@@ -67,7 +67,7 @@ class Transpose
     /**
      * Process file using config settings
      * @param $config
-     * @return CsvFile
+     * @return int
      * @throws Exception
      * @throws \Keboola\Csv\Exception
      */
@@ -160,7 +160,7 @@ class Transpose
         $csvOutHeaderArr[] = 'key';
         $csvOutHeaderArr[] = 'value';
 
-        if (isset($config['header_transpose_column_name'])) {
+        if (!empty($config['header_transpose_column_name'])) {
             $csvOutHeaderArr[] = $config['header_transpose_column_name'];
         }
 

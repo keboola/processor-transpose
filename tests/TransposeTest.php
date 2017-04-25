@@ -33,6 +33,14 @@ class TransposeTest extends TestCase
             __DIR__ . "/data/in/tables/input_2.csv.manifest",
             $tmp->getTmpFolder() . "/data/in/tables/input_2.csv.manifest"
         );
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input_3.csv",
+            $tmp->getTmpFolder() . "/data/in/tables/input_3.csv"
+        );
+        $fs->copy(
+            __DIR__ . "/data/in/tables/input_3.csv.manifest",
+            $tmp->getTmpFolder() . "/data/in/tables/input_3.csv.manifest"
+        );
 
         return $tmp->getTmpFolder();
     }
@@ -60,7 +68,7 @@ class TransposeTest extends TestCase
         $finder = new Finder();
         $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
 
-        $this->assertEquals(2, count($tables));
+        $this->assertEquals(3, count($tables));
         $this->assertFileEquals(__DIR__ . "/data/out/tables/expected.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
@@ -82,10 +90,6 @@ class TransposeTest extends TestCase
         $processor = new Transpose($tmpDir . '/data');
         $processor->process($config);
 
-        $finder = new Finder();
-        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
-
-        $this->assertEquals(2, count($tables));
         $this->assertFileNotEquals(__DIR__ . "/data/in/tables/input.csv", $tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
@@ -115,15 +119,35 @@ class TransposeTest extends TestCase
         $processor = new Transpose($tmpDir . '/data');
         $processor->process($config);
 
-        $finder = new Finder();
-        $tables = (array) $finder->files()->in($tmpDir . "/data/out/tables/")->name('*.csv')->sortByName()->getIterator();
-
-        $this->assertEquals(2, count($tables));
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input.csv.manifest");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv");
         $this->assertFileExists($tmpDir . "/data/out/tables/input_2.csv.manifest");
         $resultCsv = new CsvFile($tmpDir . "/data/out/tables/input.csv");
         $this->assertEquals($header, $resultCsv->getHeader());
+    }
+
+    public function testTransposeSimple()
+    {
+        $tmp = new Temp();
+        $tmp->setPreserveRunFolder(true);
+        $tmpDir = $this->prepareTmpDir($tmp);
+
+        $config = [
+            "transpose" => true,
+            "filename" => "input_3.csv",
+            "header_rows_count" => 1,
+            "header_column_names" => [],
+            "header_transpose_row" => 0,
+            "header_transpose_column_name" => "",
+            "header_sanitize" => true,
+            "transpose_from_column" => 2
+        ];
+
+        $processor = new Transpose($tmpDir . '/data');
+        $processor->process($config);
+
+        $this->assertFileEquals(__DIR__ . "/data/out/tables/expected_3.csv", $tmpDir . "/data/out/tables/input_3.csv");
+        $this->assertFileExists($tmpDir . "/data/out/tables/input_3.csv.manifest");
     }
 }
