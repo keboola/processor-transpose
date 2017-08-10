@@ -1,7 +1,6 @@
 # processor-transpose
 
 [![Build Status](https://travis-ci.org/keboola/processor-transpose.svg?branch=master)](https://travis-ci.org/keboola/processor-transpose)
-[![Docker Repository on Quay](https://quay.io/repository/keboola/processor-transpose/status "Docker Repository on Quay")](https://quay.io/repository/keboola/processor-transpose)
 
 Transforms table data from input CSV file into key-value pairs. 
 
@@ -56,7 +55,7 @@ Clone this repository and init the workspace with following commands:
  - [Build steps](https://github.com/keboola/processor-transpose/blob/master/.travis.yml)
    - build image
    - execute tests against new image
-   - publish image to [quay.io](https://quay.io/repository/keboola/processor-transpose). Only if release is tagged
+   - publish image to AWS ECR and update tag in Keboola Developer Portal
    
 # Usage
 
