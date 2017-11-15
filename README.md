@@ -1,3 +1,11 @@
+# DEPRECATED
+
+This processor is deprecated, used only in `keboola.ex-google-drive` configs. Do not use anywhere else, as it does not support
+
+ - sliced files
+ - manifests
+ - configuration rows
+
 # processor-transpose
 
 [![Build Status](https://travis-ci.org/keboola/processor-transpose.svg?branch=master)](https://travis-ci.org/keboola/processor-transpose)
